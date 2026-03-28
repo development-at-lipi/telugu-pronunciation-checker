@@ -34,36 +34,90 @@ TELUGU_LETTERS = {
 
 
 # ------------------------------------------------------------------
-# Phonetic equivalents: letters Google can't return directly are
-# mapped to what it actually outputs for those sounds.
-# Key   = what we expect the student to say (our letter)
-# Value = list of strings Google may return for that sound
+# Phonetic equivalents: what Google actually returns for each letter.
+#
+# THREE root causes fixed here:
+#   1. Google returns English romanisation for short sounds
+#      (e.g. says "అ" → Google returns "a", "క" → "ka", "మ" → "ma")
+#   2. Short/long vowel confusion (ఇ↔ఈ, ఉ↔ఊ, ఎ↔ఏ, ఒ↔ఓ)
+#   3. Retroflex/aspirated consonant swaps
 # ------------------------------------------------------------------
 PHONETIC_EQUIVALENTS = {
-    # Vocalic R  (ఋ) — Google returns రు / రి / ర
-    "ఋ":  ["రు", "రి", "ర", "రూ", "ru", "ri"],
-    # Vocalic RR (ౠ) — Google returns రూ / రీ
-    "ౠ":  ["రూ", "రీ", "రు", "రి", "ర"],
-    # Anusvara variants — అన్ / అమ్ are nasals Google may return
-    "అం": ["అన్", "అమ్", "అన", "అమ"],
-    # Visarga — Google rarely returns this; accept అ / అహ
-    "అః": ["అహ", "అ", "aha"],
-    # Consonant ఙ (nga) — very rare, Google may return న/ఞ
-    "ఙ":  ["న", "ఞ", "న్గ"],
-    # Consonant ఞ (nya)
-    "ఞ":  ["న", "ని", "న్య"],
-    # Consonant ణ vs న — Google often confuses these
-    "ణ":  ["న", "నా"],
-    "న":  ["ణ", "నా"],
-    # Retroflexes Google sometimes swaps
-    "ట":  ["త", "టా"],
-    "ఠ":  ["థ", "ఠా"],
-    "డ":  ["ద", "డా"],
-    "ఢ":  ["ధ", "ఢా"],
-    # ఱ (old Telugu ra)
-    "ఱ":  ["ర", "రా"],
-    # క్ష
-    "క్ష": ["క్ష", "క్ష", "కష", "క్షా"],
+    # ── VOWELS ────────────────────────────────────────────────────
+    # అ (a)  — Google often returns English "a" or a Telugu word
+    "అ":  ["a", "aa", "ah", "అమ్మ", "అక్క", "అది", "అన్", "అప్"],
+    # ఆ (aa) — may return "aa", "ah", "aha"
+    "ఆ":  ["aa", "ah", "aha", "a", "ఆహ్", "ఆమె"],
+    # ఇ (i)  — confused with ఈ; Google may return English "i"/"e"
+    "ఇ":  ["i", "e", "ee", "ఈ", "ఇక", "in"],
+    # ఉ (u)  — confused with ఊ; Google may return "u"/"oo"
+    "ఉ":  ["u", "oo", "ఊ", "un", "up"],
+    # ఊ (uu) — confused with ఉ; Google may return "oo"/"u"
+    "ఊ":  ["uu", "oo", "u", "ఉ"],
+    # ఋ (ri) — Google returns రు/రి/ర
+    "ఋ":  ["రు", "రి", "ర", "రూ", "ru", "ri", "r"],
+    # ౠ (rri)
+    "ౠ":  ["రూ", "రీ", "రు", "రి", "ర", "rri", "rru"],
+    # ఎ (e)  — confused with ఏ; Google may return "e"/"a"
+    "ఎ":  ["e", "a", "ae", "ఏ", "em"],
+    # ఏ (ee/ay) — may return "ay","hey","e"
+    "ఏ":  ["ee", "e", "ay", "hey", "ఎ", "yay"],
+    # ఐ (ai) — may return "ai","eye","aye"
+    "ఐ":  ["ai", "aye", "eye", "i", "ఏ", "ae"],
+    # ఒ (o)  — confused with ఓ; may return "o"
+    "ఒ":  ["o", "oh", "ఓ", "ఒక"],
+    # ఓ (oh) — may return "oh","o"
+    "ఓ":  ["oh", "o", "ow", "ఒ"],
+    # ఔ (au/ow)
+    "ఔ":  ["au", "ow", "ou", "aw", "ఆ", "aow"],
+    # అం (am/an) — nasal
+    "అం": ["అన్", "అమ్", "అన", "అమ", "am", "an"],
+    # అః (visarga)
+    "అః": ["అహ", "అ", "aha", "ah"],
+
+    # ── CONSONANTS ────────────────────────────────────────────────
+    # క (ka) — Google returns "ka", "ga"
+    "క":  ["ka", "ga", "కా", "కి", "కు", "kaa", "k"],
+    # ఖ (kha) — aspirated k
+    "ఖ":  ["kha", "ka", "ఖా", "kh", "ga"],
+    # ఘ (gha) — aspirated g
+    "ఘ":  ["gha", "ga", "ఘా", "gaa", "gh"],
+    # ఙ (nga) — very rare
+    "ఙ":  ["nga", "na", "న", "ఞ", "న్గ", "ng"],
+    # ఝ (jha)
+    "ఝ":  ["jha", "ja", "ఝా", "za", "jh"],
+    # ఞ (nya)
+    "ఞ":  ["nya", "na", "ni", "న", "ని", "న్య", "gna"],
+    # ట (Ta) — retroflex t
+    "ట":  ["ta", "tha", "టా", "త", "t", "taa", "Ta"],
+    # ఠ (Tha) — retroflex aspirated t
+    "ఠ":  ["tha", "ta", "ఠా", "థ", "టా", "Tha", "th"],
+    # డ (Da) — retroflex d
+    "డ":  ["da", "డా", "ta", "ద", "Da", "daa"],
+    # ఢ (Dha) — retroflex aspirated d
+    "ఢ":  ["dha", "da", "ఢా", "డా", "ధ", "Dha", "dh"],
+    # ణ (Na) — retroflex n
+    "ణ":  ["na", "నా", "న", "Na", "naa"],
+    # న (na) — dental n
+    "న":  ["ణ", "నా", "na", "naa"],
+    # త (ta) — dental t
+    "త":  ["ta", "tha", "తా", "te", "da", "t", "taa"],
+    # థ (tha) — aspirated dental t
+    "థ":  ["tha", "ta", "థా", "th", "taa"],
+    # ధ (dha) — aspirated dental d
+    "ధ":  ["dha", "da", "ధా", "ద", "dh", "dhaa"],
+    # ఫ (pha/fa)
+    "ఫ":  ["pha", "fa", "ఫా", "pa", "f", "ph", "phaa"],
+    # బ (ba)
+    "బ":  ["ba", "బా", "va", "b", "pa", "baa"],
+    # భ (bha)
+    "భ":  ["bha", "ba", "bhaa", "భా", "బ", "bh"],
+    # మ (ma)
+    "మ":  ["ma", "మా", "maa", "m", "me"],
+    # ఱ (old Ra)
+    "ఱ":  ["ర", "రా", "ra", "raa"],
+    # క్ష (ksha)
+    "క్ష": ["క్ష", "కష", "క్షా", "ksha", "ksh"],
 }
 
 
@@ -184,65 +238,69 @@ def _similarity_score(s1: str, s2: str) -> int:
     return int((1 - distance / max_len) * 100)
 
 
+def _google_recognize(recognizer, audio, language: str) -> list:
+    """Run Google recognition for one language, return list of result dicts."""
+    results = []
+    try:
+        all_results = recognizer.recognize_google(audio, language=language, show_all=True)
+        if all_results and "alternative" in all_results:
+            for alt in all_results["alternative"]:
+                t = alt.get("transcript", "").strip()
+                if t:
+                    results.append({
+                        "text": t,
+                        "confidence": alt.get("confidence", 0.5),
+                        "engine": f"google-{language}"
+                    })
+        if not results:
+            t = recognizer.recognize_google(audio, language=language)
+            if t:
+                results.append({"text": t.strip(), "confidence": 0.6, "engine": f"google-{language}"})
+    except (sr.UnknownValueError, Exception):
+        pass
+    return results
+
+
 def recognize_audio(audio_path: str) -> dict:
     """
     Recognize Telugu speech from audio file.
-    Tries multiple recognition approaches for best results.
+    Strategy:
+      Pass 1 — te-IN  (native Telugu script)
+      Pass 2 — en-IN  (catches romanised returns like "ka","ma","ba")
+    Both result sets are merged and ranked by the caller.
     """
     recognizer = sr.Recognizer()
-
-    # Adjust recognizer settings for short audio (single letters)
-    recognizer.energy_threshold = 200
+    recognizer.energy_threshold = 150          # lower = picks up quieter sounds
     recognizer.dynamic_energy_threshold = False
-    recognizer.pause_threshold = 0.5
+    recognizer.pause_threshold = 0.4
 
     try:
         with sr.AudioFile(audio_path) as source:
-            # Read with slight padding for short audio
             audio = recognizer.record(source)
 
         results = []
 
-        # Try Google Speech Recognition (free, supports Telugu)
-        try:
-            # Get all possible results
-            all_results = recognizer.recognize_google(
-                audio,
-                language="te-IN",
-                show_all=True
-            )
+        # Pass 1: Telugu
+        results += _google_recognize(recognizer, audio, "te-IN")
 
-            if all_results and "alternative" in all_results:
-                for alt in all_results["alternative"]:
-                    transcript = alt.get("transcript", "")
-                    confidence = alt.get("confidence", 0.5)
-                    if transcript:
-                        results.append({
-                            "text": transcript,
-                            "confidence": confidence,
-                            "engine": "google"
-                        })
-
-            if not results:
-                # Try single result mode
-                text = recognizer.recognize_google(audio, language="te-IN")
-                if text:
-                    results.append({
-                        "text": text,
-                        "confidence": 0.7,
-                        "engine": "google"
-                    })
-
-        except sr.UnknownValueError:
-            pass
-        except sr.RequestError as e:
-            return {"error": f"Google API error: {str(e)}", "results": []}
+        # Pass 2: Indian English — catches romanised output ("ka", "ma", "ba" …)
+        # Only add if not already present in Telugu results
+        en_results = _google_recognize(recognizer, audio, "en-IN")
+        existing_texts = {r["text"].lower() for r in results}
+        for r in en_results:
+            if r["text"].lower() not in existing_texts:
+                results.append(r)
 
         if not results:
-            return {"error": "Could not recognize any speech. Please speak louder and clearer.", "results": []}
+            return {
+                "error": "Could not recognise any speech. Speak louder and hold the sound for 1–2 seconds.",
+                "results": []
+            }
 
         return {"error": None, "results": results}
 
+    except sr.RequestError as e:
+        return {"error": f"Google API error: {str(e)}", "results": []}
     except Exception as e:
         return {"error": f"Audio processing error: {str(e)}", "results": []}
 
@@ -290,22 +348,26 @@ def verify_pronunciation():
         # Convert to WAV (required by SpeechRecognition)
         audio = AudioSegment.from_file(tmp_path)
 
-        # Ensure good quality for recognition
+        # Normalise to 16 kHz mono 16-bit (Google prefers this)
         audio = audio.set_frame_rate(16000).set_channels(1).set_sample_width(2)
 
-        # Trim silence from start and end
-        # Use a simple approach: find non-silent portions
+        # Gentle silence trim — use -50 dB so we don't clip short vowels
         from pydub.silence import detect_nonsilent
-        nonsilent = detect_nonsilent(audio, min_silence_len=300, silence_thresh=-40)
+        nonsilent = detect_nonsilent(audio, min_silence_len=200, silence_thresh=-50)
 
         if nonsilent:
-            start = max(0, nonsilent[0][0] - 100)  # 100ms padding
-            end = min(len(audio), nonsilent[-1][1] + 100)
+            start = max(0, nonsilent[0][0] - 200)   # 200 ms pre-padding
+            end   = min(len(audio), nonsilent[-1][1] + 200)
             audio = audio[start:end]
 
-        # Add small padding (helps recognition of short sounds)
-        silence = AudioSegment.silent(duration=300, frame_rate=16000)
-        audio = silence + audio + silence
+        # Ensure minimum 1 second of content (short vowels need this)
+        if len(audio) < 1000:
+            repeat = AudioSegment.silent(duration=200) + audio + AudioSegment.silent(duration=200)
+            audio = repeat
+
+        # Wrap with 500 ms silence on each side — critical for single-letter recognition
+        pad = AudioSegment.silent(duration=500, frame_rate=16000)
+        audio = pad + audio + pad
 
         audio.export(wav_path, format="wav")
 
